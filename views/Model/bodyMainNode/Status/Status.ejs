@@ -1,0 +1,11 @@
+<div v-cloak id="StatusBox" v-if="isAlive">
+    <div class="GroundBox" :title="title">
+        <p v-if="state.hostname">系统名称:{{state.hostname}}</p>
+        <p v-if="state.arch">系统架构:{{state.arch}}</p>
+        <p v-if="state.cpus || (state.cpus>0)">CPU核心:{{state.cpus}}</p>
+        <p v-if="state.CpuModel">CPU型号:{{state.CpuModel}}</p>
+        <p v-if="state.platform">系统类型:{{state.platform}}</p>
+        <p v-if="state.release">内核版本:{{state.release}}</p>
+        <p v-if="state.freemem && state.totalmem">内存占用:{{state.freemem}} / {{state.totalmem}}</p>
+    </div>
+</div>

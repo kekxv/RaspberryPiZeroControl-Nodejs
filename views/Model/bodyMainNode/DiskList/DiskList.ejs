@@ -1,0 +1,15 @@
+<div v-cloak id="DiskList" v-if="isAlive">
+    <div class="GroundBox" :title="title">
+        <div style="font-size: 0.8em;" v-if="state" v-for="disk in state" class="GroundBox" :title="disk.device">
+            <p>磁盘大小:{{(disk.size / 1024 / 1024 / 1024).toFixed(4) + "G"}}</p>
+            <p>磁盘类型:{{disk.busType}}</p>
+            <p>磁盘描述:{{disk.description}}</p>
+            <p>磁盘地址:{{disk.devicePath}}</p>
+            <p>Is &nbsp;USB:{{disk.isUSB?"是":"否"}}</p>
+            <p>硬盘路径:{{disk.raw}}</p>
+            <div v-if="disk.mountpoints.length>0" style="border: 1px solid #000;padding: 0.5em;font-size: 0.8em;">
+                <p v-for="subDisk in disk.mountpoints">名称：{{subDisk.label||"未定义"}} ; 路径:{{subDisk.path}}</p>
+            </div>
+        </div>
+    </div>
+</div>

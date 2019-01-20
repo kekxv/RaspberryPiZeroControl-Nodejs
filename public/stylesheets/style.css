@@ -1,0 +1,105 @@
+body {
+    padding: 50px;
+    font: 14px YOUYUAN, "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+p {
+    padding: 0;
+    margin: 0;
+}
+
+a {
+    color: #00B7FF;
+}
+
+
+[v-cloak] {
+    display: none !important;
+}
+
+#header {
+    background: #90CAF9;
+    padding: 0.3em;
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4em;
+    box-sizing: border-box;
+    padding-left: 2em;
+    z-index: 9999999;
+    line-height: 4em;
+}
+
+#header > span {
+    font-size: 2em;
+}
+
+#footer {
+    /*position: sticky;*/
+    /*bottom: 0;*/
+    /*left: 0;*/
+    /*right: 0;*/
+    /*height: 3em;*/
+    text-align: center;
+    background: #90caf9;
+    box-sizing: border-box;
+    padding: 0.5em;
+    z-index: 9999999;
+
+}
+
+#mainBox {
+    position: relative;
+    /*top: 0;*/
+    /*left: 0;*/
+    /*right: 0;*/
+    /*bottom: 3em;*/
+    overflow: auto;
+    min-height: 300px;
+}
+
+.GroundBox[title] {
+    position: relative;
+    min-width: 120px;
+    max-width: 100%;
+    min-height: 1em;
+    background: rgba(255, 255, 255, 0);
+    display: inline-block;
+    padding: 0.5em;
+    border-radius: 3px;
+    margin-top: 1.8em !important;
+    padding-top: 0.8em !important;
+    border: 1px solid;
+    word-break: break-all;
+    line-height: 2em;
+    letter-spacing: 1px;
+}
+
+.GroundBox[title]:before {
+    content: attr(title);
+    position: absolute;
+    left: 1em;
+    top: -1.5em;
+    border-radius: 5px;
+    padding: 5px 10px;
+    background: #FFFFFF;
+    border: 1px solid;
+    font-size: 1.2em;
+    line-height: 1.1em;
+}
+
+.GroundBox[title] p {
+    border-bottom: 1px solid #CCCCCC;
+}
+
+.GroundBox[title] p:last-child {
+    border-bottom: none;
+}
+
+@media screen and (max-width: 500px) {
+    .GroundBox[title] {
+        display: block;
+        float: unset;
+    }
+}

@@ -1,0 +1,13 @@
+#DiskList{
+    display: inline-block;
+    padding: 0.5em;
+    float: left;
+}
+
+
+@media screen and (max-width: 500px) {
+    #DiskList {
+        display: block;
+        float: unset;
+    }
+}

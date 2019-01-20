@@ -1,0 +1,132 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+(function () {
+    let functionPrototypeBind = Function.prototype.bind;
+    Function.prototype.bind = function bind() {
+        let fn = typeof this.__bind__ === 'function' ? this.__bind__ : this;
+        let bindfn = functionPrototypeBind.apply(fn, arguments);
+        Object.defineProperty(bindfn, '__bind__', {
+            enumerable: false,
+            value: fn
+        });
+        return bindfn;
+    };
+
+})();
+
+let arguments = process.argv.splice(2);
+
+let username = "admin";
+let password = "admin";
+arguments.forEach(function (val, index, array) {
+    let value = val.split("=");
+    if (value.length === 2) {
+        switch (value[0]) {
+            case "username":
+                username = value[1];
+                break;
+            case "password":
+                password = value[1];
+                break;
+            default:
+                break;
+        }
+    }
+});
+
+
+let DB = require("../model/SqliteTool");
+
+if (DB.IsExists) {
+    DB.Init(username, password);
+}
+
+
+var app = require('../app');
+var debug = require('debug')('raspberrypizerocontrol-nodejs:server');
+var http = require('http');
+
+/**
+ * Get port from environment and store in Express.
+ */
+
+var port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ */
+
+var server = http.createServer(app);
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+    var port = parseInt(val, 10);
+
+    if (isNaN(port)) {
+        // named pipe
+        return val;
+    }
+
+    if (port >= 0) {
+        // port number
+        return port;
+    }
+
+    return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError(error) {
+    if (error.syscall !== 'listen') {
+        throw error;
+    }
+
+    var bind = typeof port === 'string'
+        ? 'Pipe ' + port
+        : 'Port ' + port;
+
+    // handle specific listen errors with friendly messages
+    switch (error.code) {
+        case 'EACCES':
+            console.error(bind + ' requires elevated privileges');
+            process.exit(1);
+            break;
+        case 'EADDRINUSE':
+            console.error(bind + ' is already in use');
+            process.exit(1);
+            break;
+        default:
+            throw error;
+    }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+    var addr = server.address();
+    var bind = typeof addr === 'string'
+        ? 'pipe ' + addr
+        : 'port ' + addr.port;
+    debug('Listening on ' + bind);
+}

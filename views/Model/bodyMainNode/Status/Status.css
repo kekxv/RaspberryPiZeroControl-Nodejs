@@ -1,0 +1,14 @@
+#StatusBox{
+    display: inline-block;
+    padding: 0.5em;
+    float: left;
+}
+#StatusBox .GroundBox{
+}
+
+@media screen and (max-width: 500px) {
+    #StatusBox {
+        display: block;
+        float: unset;
+    }
+}

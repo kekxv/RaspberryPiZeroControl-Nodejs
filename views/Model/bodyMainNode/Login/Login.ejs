@@ -1,0 +1,12 @@
+<div v-cloak id="LoginBox" v-if="isAlive">
+    <div>
+        <input placeholder="请输入帐号" v-model="username" autofocus autocomplete="false">
+        <hr/>
+        <input placeholder="请输入密码" v-model="password" type="password">
+        <br/>
+        <div v-if="!!tip" style="margin-top: 0.8em;color: red;">{{tip}}</div>
+        <br/>
+        <button @click="Login()">登录</button>
+        <button onclick="alert('树莓派实时状态信息')" right>关于</button>
+    </div>
+</div>
