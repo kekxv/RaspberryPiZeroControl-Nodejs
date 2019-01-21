@@ -43,6 +43,12 @@ db.Init = function (username, password) {
     }
 };
 
+process.on('uncaughtException', function(err) {
+    let data = db.export();
+    let buffer = Buffer.from(data);
+    fs.writeFileSync(file, buffer);
+});
+
 db.IsExists = exists;
 
 module.exports = db;
