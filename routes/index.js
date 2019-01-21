@@ -21,7 +21,8 @@ router.get('/', function (req, res, next) {
 router.get('/Main.js', function (req, res, next) {
     res.set('Content-Type', 'application/javascript; charset=UTF-8');
     res.render('javascript/main', {
-        wsPort: config.WsJsPort
+        wsPort: config.WsJsPort,
+        wsType: config.wsType
     });
 });
 

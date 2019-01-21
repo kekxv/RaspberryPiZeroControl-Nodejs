@@ -22,6 +22,7 @@ db.SHA256 = function (str) {
 
 db.Init = function (username, password) {
     if (!exists) {
+        console.log(username, password);
         db.IsExists = exists = true;
         db.run(`
             CREATE TABLE [UserList](

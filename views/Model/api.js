@@ -1,10 +1,9 @@
-
 let Token = null;
 
 let api = new API({
     url: ("{ws}://{hostname}:{port}/{path}".format({
-        ws: "ws",
-        port: wsPort||3001,
+        ws: wsType || "ws",
+        port: wsPort || 3001,
         path: "ws",
         hostname: window.location.hostname
     })),
@@ -33,6 +32,7 @@ function Login(name, password, callback) {
 }
 
 let LoginTokenCount = 10;
+
 function LoginToken(token, callback) {
     callback = callback || console.log;
     api.Send({
@@ -41,7 +41,7 @@ function LoginToken(token, callback) {
     }, function (data) {
         if (data.ErrCode === ErrCode.NoConnect) {
             LoginTokenCount--;
-            if(LoginTokenCount<0){
+            if (LoginTokenCount < 0) {
                 callback(false);
                 return;
             }
