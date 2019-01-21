@@ -4,12 +4,28 @@ let config = require('../config');
 let ws = require('nodejs-websocket');
 let os = require('os');
 let driveList = require('drivelist');
+let request = require("request");
+
 const i2c = require('i2c-bus');
 const Ups_Addr = 0x36;
 let i2c1 = null;
 
+function Notice(callback, title, body, email) {
+    let url = "http://127.0.0.1/PHPMailer/?emailPath={emailPath}&emailTitle={emailTitle}&emailBody={emailBody}".format({
+        emailPath: email || "kekxv@qq.com",
+        emailTitle: encodeURIComponent(title),
+        emailBody: encodeURIComponent(body)
+    });
+    request.get({url: url}, function (err, response, body) {
+        console.info(response.body);
+        (callback || console.log)(err);
+    });
+}
+
+Notice(null,"启动提醒","设备启动(重启)");
 
 let Battery = {};
+let Notice20_Flag = true;
 if (os.arch().toLocaleLowerCase() === "arm") {
     if (i2c1 == null) {
         i2c1 = i2c.openSync(1);
@@ -24,8 +40,15 @@ if (os.arch().toLocaleLowerCase() === "arm") {
             let dataP = i2c1.readWordSync(Ups_Addr, 0x04);
             let p = parseInt((((dataP & 0xFF) << 8) + (dataP >> 8)) / 256 - 5);
             Battery = {v: v, p: p};
+            if (p > 20) Notice20_Flag = true;
+            if (Notice20_Flag && p < 20) {
+                Notice20_Flag = false;
+                Notice(null, "低电量提醒", "电量过低，当前电量低于 20%");
+            }
             if (p < 2) {
-                child_process.execSync("sudo shutdown -h now");
+                Notice(function () {
+                    child_process.execSync("sudo shutdown -h now");
+                }, "关机提醒", "低电量自动关机！");
                 return;
             }
             setTimeout(UpdateBattery, 1000);
