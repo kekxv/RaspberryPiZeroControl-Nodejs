@@ -1,4 +1,5 @@
 let child_process = require("child_process");
+let config = require('../config');
 
 let ws = require('nodejs-websocket');
 let os = require('os');
@@ -237,6 +238,6 @@ let WsServer = ws.createServer(function (conn) {
 
         }
     };
-}).listen(3001);
+}).listen(config.WsPort || 3001);
 
 module.exports = WsServer;

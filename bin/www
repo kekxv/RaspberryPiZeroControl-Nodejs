@@ -39,6 +39,7 @@ arguments.forEach(function (val, index, array) {
 });
 
 
+let config = require('../config');
 let DB = require("../model/SqliteTool");
 
 if (!DB.IsExists) {
@@ -54,7 +55,7 @@ var http = require('http');
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || config.Port ||  '3000');
 app.set('port', port);
 
 /**
