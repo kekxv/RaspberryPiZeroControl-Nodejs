@@ -37,6 +37,9 @@ db.Init = function (username, password) {
                 $Name: username,
                 $Password: db.SHA256(password),
             });
+        let data = db.export();
+        let buffer = new Buffer(data);
+        fs.writeFileSync(file, buffer);
     }
 };
 
