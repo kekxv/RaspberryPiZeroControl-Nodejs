@@ -4,8 +4,8 @@ let BatteryBox = new Vue({
         title: "电池状态",
         isAlive: false,
         state: {
-            v:null,
-            p:null
+            v: null,
+            p: null
         },
 
 
@@ -15,28 +15,28 @@ let BatteryBox = new Vue({
     methods: {
         UpdateState: function () {
             let self = this;
-            this.$nextTick(function () {
-                api.Send({
-                    Type: Type.GetBattery,
-                }, function (data) {
-                    if (data.ErrCode === ErrCode.Success) {
-                        self.state = data.Message;
-                    }else if(data.ErrCode === ErrCode.Fail){
-                        clearInterval(self.timerIndex);
-                    }
-                });
+            if (!self.isAlive) return;
+            api.Send({
+                Type: Type.GetBattery,
+            }, function (data) {
+                if (data.ErrCode === ErrCode.Success) {
+                    self.state = data.Message;
+                } else if (data.ErrCode === ErrCode.Fail) {
+                    clearTimeout(self.timerIndex);
+                    return;
+                }
+                this.timerIndex = setTimeout(function () {
+                    self.UpdateState();
+                }, 1500);
             });
         }
     },
     watch: {
         isAlive: function (newVal, oldVal) {
-            clearInterval(this.timerIndex);
+            clearTimeout(this.timerIndex);
             if (newVal) {
                 let self = this;
                 self.UpdateState();
-                this.timerIndex = setInterval(function () {
-                    self.UpdateState();
-                }, 1500);
             }
         }
     },
@@ -44,6 +44,6 @@ let BatteryBox = new Vue({
 
     },
     distroyed: function () {
-        clearInterval(this.timerIndex);
+        clearTimeout(this.timerIndex);
     }
 });
