@@ -22,24 +22,21 @@ db.SHA256 = function (str) {
 
 db.Init = function (username, password) {
     if (!exists) {
-        db.serialize(function () {
-            db.run(`
+        db.IsExists = exists = true;
+        db.run(`
             CREATE TABLE [UserList](
                [ID]             INTEGER     PRIMARY KEY AUTOINCREMENT    NOT NULL,
                [User]           CHAR(150)   NOT NULL UNIQUE,
                [Name]           TEXT        NOT NULL,
                [Password]       CHAR(255)    NOT NULL
-            );`);
+            );`,{});
 
-            db.run(`INSERT INTO [UserList]([User],[Name],[Password]) VALUES($User,$Name,$Password)`,
-                {
-                    $User: username,
-                    $Name: username,
-                    $Password: db.SHA256(password),
-                }
-            , function () {
+        db.run(`INSERT INTO [UserList]([User],[Name],[Password]) VALUES($User,$Name,$Password)`,
+            {
+                $User: username,
+                $Name: username,
+                $Password: db.SHA256(password),
             });
-        });
     }
 };
 

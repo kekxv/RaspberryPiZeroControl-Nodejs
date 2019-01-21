@@ -41,7 +41,7 @@ arguments.forEach(function (val, index, array) {
 
 let DB = require("../model/SqliteTool");
 
-if (DB.IsExists) {
+if (!DB.IsExists) {
     DB.Init(username, password);
 }
 
