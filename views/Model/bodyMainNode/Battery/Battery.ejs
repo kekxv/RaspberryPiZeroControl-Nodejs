@@ -1,7 +1,7 @@
 <div v-cloak id="BatteryBox" v-if="isAlive">
     <div class="GroundBox" :title="title">
         <p>仅支持树莓派</p>
-        <p v-if="state.v">电池电压:{{state.v}}</p>
-        <p v-if="state.p">电池电量:{{state.p}}</p>
+        <p v-if="state.v">电池电压:{{state.v}} V</p>
+        <p v-if="state.p">电池电量:{{state.p>100?100:state.p}} %</p>
     </div>
 </div>

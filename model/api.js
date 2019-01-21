@@ -1,9 +1,39 @@
+let child_process = require("child_process");
+
 let ws = require('nodejs-websocket');
 let os = require('os');
 let driveList = require('drivelist');
 const i2c = require('i2c-bus');
 const Ups_Addr = 0x36;
 let i2c1 = null;
+
+
+let Battery = {};
+if (os.arch().toLocaleLowerCase() === "arm") {
+    if (i2c1 == null) {
+        i2c1 = i2c.openSync(1);
+    }
+    if (i2c1 == null) {
+        console.log("获取电池状态失败;无法开启 I2C 设备");
+    } else {
+        function UpdateBattery() {
+            let dataV = i2c1.readWordSync(Ups_Addr, 0x02);
+            let v = (((dataV & 0xFF) << 8) + (dataV >> 8)) * 1.25 / 1000 / 16;
+            v = v.toFixed(2);
+            let dataP = i2c1.readWordSync(Ups_Addr, 0x04);
+            let p = parseInt((((dataP & 0xFF) << 8) + (dataP >> 8)) / 256 - 5);
+            Battery = {v: v, p: p};
+            if (p < 2) {
+                child_process.execSync("sudo shutdown -h now");
+                return;
+            }
+            setTimeout(UpdateBattery, 1000);
+        }
+
+        UpdateBattery();
+    }
+}
+
 
 let UserInfo = require("./userinfo");
 
@@ -55,7 +85,6 @@ let WsServer = ws.createServer(function (conn) {
 
     conn.on("text", function (str) {
         let callback_flag = true;
-        let self = this;
         let message = {
             ErrCode: ErrCode.Success,
             Type: 0,
@@ -133,7 +162,7 @@ let WsServer = ws.createServer(function (conn) {
                 }
                     break;
                 case Type.GetBattery: {
-                    if(os.arch().toLocaleLowerCase()!=="arm"){
+                    if (os.arch().toLocaleLowerCase() !== "arm") {
                         message.ErrCode = ErrCode.Fail;
                         message.Message = "非 ARM（树莓派） 设备";
                         break;
@@ -149,12 +178,7 @@ let WsServer = ws.createServer(function (conn) {
                             message.ErrCode = ErrCode.Fail;
                             message.Message = "获取电池状态失败;无法开启 I2C 设备";
                         } else {
-                            let dataV = i2c1.readWordSync(Ups_Addr, 0x02);
-                            let v = (((dataV & 0xFF) << 8) + (dataV >> 8)) * 1.25 / 1000 / 16;
-                            v = v.toFixed(2);
-                            let dataP = i2c1.readWordSync(Ups_Addr, 0x04);
-                            let p = parseInt((((dataP & 0xFF) << 8) + (dataP >> 8)) / 256 / 105 * 100);
-                            message.Message = {v: v, p: p};
+                            message.Message = {v: Battery.v, p: Battery.p};
                         }
                     }
                 }
@@ -194,6 +218,7 @@ let WsServer = ws.createServer(function (conn) {
     });
     conn.on("close", function (code, reason) {
         console.log("connection closed");
+        console.log(code, reason);
         conn.$Delete();
     });
     conn.on("error", function (err) {
